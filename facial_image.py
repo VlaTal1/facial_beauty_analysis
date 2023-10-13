@@ -3,6 +3,7 @@ from points import points
 import cv2
 import mediapipe as mp
 from ratios import Ratios
+from utils import *
 
 
 class FacialImage:
@@ -27,10 +28,10 @@ class FacialImage:
         first = self.get_distance_two_points(points[ratio1_name][0], points[ratio1_name][1])
         second = self.get_distance_two_points(points[ratio2_name][0], points[ratio2_name][1])
         dividing = first / second
-        print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
+        # print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
         return dividing
 
-    def calculate_ratios(self, image_path):
+    def calculate_ratios(self, image_path, is_normalized=False):
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
 
@@ -71,5 +72,8 @@ class FacialImage:
             'Upper lip': self.get_ratio_between_two(Ratios.LEFT_UPPER_LIP_LENGTH, Ratios.RIGHT_UPPER_LIP_LENGTH),
             'Nose': self.get_ratio_between_two(Ratios.LEFT_NOSE_WIDTH, Ratios.RIGHT_NOSE_WIDTH)
         }
+
+        if is_normalized:
+            return normalization(ratios)
 
         return ratios
