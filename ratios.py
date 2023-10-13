@@ -1,0 +1,27 @@
+import enum
+
+
+class Ratios(enum.Enum):
+    UNDER_EYES = "under_eyes"
+    INTEROCULAR = "interocular"
+    NOSE_WIDTH = "nose_width"
+    MOUTH_WIDTH = "mouth_width"
+    UPPER_LIP_TO_JAW = "upper_lip_to_jaw"
+    LIPS_HEIGHT = "lips_height"
+    NOSE_TO_MOUTH_HEIGHT = "nose_to_mouth_height"
+    UPPER_LIP_HEIGHT = "upper_lip_height"
+    FACE_TOP_TO_EYEBROWS = "face_top_to_eyebrows"
+    EYEBROWS_TO_NOSE = "eyebrows_to_nose"
+    NOSE_TO_JAW = "nose_to_jaw"
+    FACE_HEIGHT = "face_height"
+    FACE_WIDTH = "face_width"
+    LEFT_LOWER_EYEBROW_LENGTH = "left_lower_eyebrow_length"
+    RIGHT_LOWER_EYEBROW_LENGTH = "right_lower_eyebrow_length"
+    LEFT_LOWER_LIP_LENGTH = "left_lower_lip_length"
+    RIGHT_LOWER_LIP_LENGTH = "right_lower_lip_length"
+    LEFT_UPPER_EYEBROW_LENGTH = "left_upper_eyebrow_length"
+    RIGHT_UPPER_EYEBROW_LENGTH = "right_upper_eyebrow_length"
+    LEFT_UPPER_LIP_LENGTH = "left_upper_lip_length"
+    RIGHT_UPPER_LIP_LENGTH = "right_upper_lip_length"
+    LEFT_NOSE_WIDTH = "nose_left_width"
+    RIGHT_NOSE_WIDTH = "nose_right_width"
