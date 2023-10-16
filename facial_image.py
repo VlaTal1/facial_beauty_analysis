@@ -1,7 +1,9 @@
 from math import dist
-from points import points
+
 import cv2
 import mediapipe as mp
+
+from points import points
 from ratios import Ratios
 from utils import *
 
@@ -30,6 +32,26 @@ class FacialImage:
         dividing = first / second
         # print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
         return dividing
+
+    def landmarks(self, image: numpy.ndarray) -> numpy.ndarray:
+        mp_face_mesh = mp.solutions.face_mesh
+        face_mesh = mp_face_mesh.FaceMesh()
+
+        # Image
+        height, width, _ = image.shape
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Facial landmarks
+        result = face_mesh.process(rgb_image)
+
+        for facial_landmarks in result.multi_face_landmarks:
+            for i in range(0, 468):
+                pt1 = facial_landmarks.landmark[i]
+                x = int(pt1.x * width)
+                y = int(pt1.y * height)
+                cv2.circle(image, (x, y), 1, (255, 0, 0), -1)
+
+        return image
 
     def calculate_ratios(self, image_path, is_normalized=False):
         mp_face_mesh = mp.solutions.face_mesh
