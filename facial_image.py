@@ -1,19 +1,25 @@
 from math import dist
-from points import points
+
 import cv2
 import mediapipe as mp
+
+from points import points
 from ratios import Ratios
 from utils import *
 
 
-class FacialImage:
-    def __init__(self, landmarks, width, height):
-        self.landmarks = landmarks
-        self.width = width
-        self.height = height
+def convert_to_numpy_array(ratios: dict[str, float]) -> numpy.array:
+    arr = []
+    for k, v in ratios.items():
+        arr.append(v)
+    return numpy.array(arr)
 
+
+class FacialImage:
     def __init__(self):
-        pass
+        self.landmarks = []
+        self.width = 0
+        self.height = 0
 
     def get_point_coordinates(self, point_num):
         point = self.landmarks[point_num]
@@ -27,25 +33,32 @@ class FacialImage:
     def get_ratio_between_two(self, ratio1_name, ratio2_name):
         first = self.get_distance_two_points(points[ratio1_name][0], points[ratio1_name][1])
         second = self.get_distance_two_points(points[ratio2_name][0], points[ratio2_name][1])
-        dividing = first / second
-        # print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
-        return dividing
+        return first / second
 
-    def calculate_ratios(self, image_path, is_normalized=False):
+    def get_landmarks(self, image: numpy.ndarray):
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
 
         # Image
-        image = cv2.imread(image_path)
         height, width, _ = image.shape
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         # Facial landmarks
         result = face_mesh.process(rgb_image)
 
+        for facial_landmarks in result.multi_face_landmarks:
+            for i in range(0, 468):
+                pt1 = facial_landmarks.landmark[i]
+                x = int(pt1.x * width)
+                y = int(pt1.y * height)
+                cv2.circle(image, (x, y), 1, (255, 0, 0), -1)
+
         self.landmarks = result.multi_face_landmarks[0].landmark
         self.width = width
         self.height = height
+
+    def calculate_ratios(self, image: numpy.ndarray, is_normalized=False):
+        self.get_landmarks(image)
 
         ratios = {
             'Under eyes/Interocular': self.get_ratio_between_two(Ratios.UNDER_EYES, Ratios.INTEROCULAR),
@@ -74,6 +87,6 @@ class FacialImage:
         }
 
         if is_normalized:
-            return normalization(ratios)
+            return normalization(ratios), image
 
-        return ratios
+        return ratios, image
