@@ -8,14 +8,18 @@ from ratios import Ratios
 from utils import *
 
 
-class FacialImage:
-    def __init__(self, landmarks, width, height):
-        self.landmarks = landmarks
-        self.width = width
-        self.height = height
+def convert_to_numpy_array(ratios: dict[str, float]) -> numpy.array:
+    arr = []
+    for k, v in ratios.items():
+        arr.append(v)
+    return numpy.array(arr)
 
+
+class FacialImage:
     def __init__(self):
-        pass
+        self.landmarks = []
+        self.width = 0
+        self.height = 0
 
     def get_point_coordinates(self, point_num):
         point = self.landmarks[point_num]
@@ -29,11 +33,9 @@ class FacialImage:
     def get_ratio_between_two(self, ratio1_name, ratio2_name):
         first = self.get_distance_two_points(points[ratio1_name][0], points[ratio1_name][1])
         second = self.get_distance_two_points(points[ratio2_name][0], points[ratio2_name][1])
-        dividing = first / second
-        # print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
-        return dividing
+        return first / second
 
-    def get_landmarks(self, image: numpy.ndarray) -> numpy.ndarray:
+    def get_landmarks(self, image: numpy.ndarray):
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
 
@@ -55,16 +57,8 @@ class FacialImage:
         self.width = width
         self.height = height
 
-        return image
-
-    def convert_to_numpy_array(self, ratios: dict[str, float]) -> numpy.array:
-        arr = []
-        for k, v in ratios.items():
-            arr.append(v)
-        return numpy.array(arr)
-
     def calculate_ratios(self, image: numpy.ndarray, is_normalized=False):
-        image = self.get_landmarks(image)
+        self.get_landmarks(image)
 
         ratios = {
             'Under eyes/Interocular': self.get_ratio_between_two(Ratios.UNDER_EYES, Ratios.INTEROCULAR),
