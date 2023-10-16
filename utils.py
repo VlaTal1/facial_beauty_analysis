@@ -14,6 +14,18 @@ def write_to_csv(ratios, file_name):
     with open(file_name, 'a', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         csvwriter.writerows(rows)
+        csvfile.close()
+
+
+def write_line_to_csv(ratios, file_name):
+    row = []
+
+    for key, value in ratios.items():
+        row.append(value)
+
+    with open(file_name, 'a', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(row)
 
 
 def standard_deviation(values):
