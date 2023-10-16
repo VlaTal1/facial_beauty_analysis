@@ -1,3 +1,5 @@
+import os
+
 import cv2
 import gradio as gr
 import numpy as np
@@ -12,6 +14,8 @@ description = "A model to classify is face beautiful or not."
 target_width = 512
 facial = FacialImage()
 loaded_svm_classifier = joblib.load('svm_model.pkl')
+
+example_list = [["examples/" + example] for example in os.listdir("examples")]
 
 
 def process_image(input_image: np.ndarray):
@@ -45,6 +49,7 @@ iface = gr.Interface(
     inputs=gr.inputs.Image(),
     outputs=["image", gr.Number(label="Predicted class"), gr.Number(label="Probability")],
     title=title,
-    description=description)
+    description=description,
+    examples=example_list)
 
 iface.launch()
