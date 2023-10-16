@@ -33,7 +33,7 @@ class FacialImage:
         # print(f'{ratio1_name.value} / {ratio2_name.value} = {dividing}')
         return dividing
 
-    def landmarks(self, image: numpy.ndarray) -> numpy.ndarray:
+    def get_landmarks(self, image: numpy.ndarray) -> numpy.ndarray:
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
 
@@ -51,23 +51,20 @@ class FacialImage:
                 y = int(pt1.y * height)
                 cv2.circle(image, (x, y), 1, (255, 0, 0), -1)
 
-        return image
-
-    def calculate_ratios(self, image_path, is_normalized=False):
-        mp_face_mesh = mp.solutions.face_mesh
-        face_mesh = mp_face_mesh.FaceMesh()
-
-        # Image
-        image = cv2.imread(image_path)
-        height, width, _ = image.shape
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        # Facial landmarks
-        result = face_mesh.process(rgb_image)
-
         self.landmarks = result.multi_face_landmarks[0].landmark
         self.width = width
         self.height = height
+
+        return image
+
+    def convert_to_numpy_array(self, ratios: dict[str, float]) -> numpy.array:
+        arr = []
+        for k, v in ratios.items():
+            arr.append(v)
+        return numpy.array(arr)
+
+    def calculate_ratios(self, image: numpy.ndarray, is_normalized=False):
+        image = self.get_landmarks(image)
 
         ratios = {
             'Under eyes/Interocular': self.get_ratio_between_two(Ratios.UNDER_EYES, Ratios.INTEROCULAR),
@@ -96,6 +93,6 @@ class FacialImage:
         }
 
         if is_normalized:
-            return normalization(ratios)
+            return normalization(ratios), image
 
-        return ratios
+        return ratios, image
